@@ -2,6 +2,7 @@ import streamlit as st
 import toml
 import os
 import sys
+import importlib.metadata
 
 
 def display_toml_content(title: str, file_path: str) -> None:
@@ -42,4 +43,8 @@ with tabs[1]:
 
     display_toml_content('Obsah config.toml', config_file_path)
     display_toml_content('Obsah secrets.toml', secrets_file_path)
+
+    st.title('Installed packages')
+    for dist in importlib.metadata.distributions():
+        st.write(dist.metadata["Name"], dist.version)
 
