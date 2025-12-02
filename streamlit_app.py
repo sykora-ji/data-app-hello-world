@@ -1,6 +1,7 @@
 import streamlit as st
 import toml
 import os
+import sys
 
 
 def display_toml_content(title: str, file_path: str) -> None:
@@ -27,6 +28,8 @@ with tabs[0]:
 
 with tabs[1]:
     st.header("Debug")
+    st.title('Python version')
+    st.write(sys.version)
 
     config_file_path = os.path.join(os.path.dirname(__file__), os.path.pardir, '.streamlit', 'config.toml')
     secrets_file_path = os.path.join(os.path.dirname(__file__), os.path.pardir, '.streamlit', 'secrets.toml')
