@@ -48,3 +48,18 @@ with tabs[1]:
     for dist in importlib.metadata.distributions():
         st.write(dist.metadata["Name"], dist.version)
 
+    st.title('Soubory v /data')
+    data_path = '/data'
+    if os.path.isdir(data_path):
+        files = []
+        for root, _, filenames in os.walk(data_path):
+            for filename in filenames:
+                files.append(os.path.join(root, filename))
+        if files:
+            for file_path in sorted(files):
+                st.write(file_path)
+        else:
+            st.write(f'Složka {data_path} je prázdná.')
+    else:
+        st.error(f'Složka {data_path} neexistuje.')
+
