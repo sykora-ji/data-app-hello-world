@@ -2,7 +2,9 @@ import streamlit as st
 import toml
 import os
 import sys
+import json
 import importlib.metadata
+import pandas as pd
 
 
 def display_toml_content(title: str, file_path: str) -> None:
@@ -15,6 +17,29 @@ def display_toml_content(title: str, file_path: str) -> None:
         st.error(f'Soubor {file_path} nebyl nalezen.')
     except toml.TomlDecodeError:
         st.error(f'Soubor {file_path} má neplatný formát.')
+
+
+def render_file_preview(file_path: str) -> None:
+    """Render a preview of the file based on its extension."""
+    ext = os.path.splitext(file_path)[1].lower()
+    try:
+        if ext == '.csv':
+            st.dataframe(pd.read_csv(file_path))
+        elif ext == '.tsv':
+            st.dataframe(pd.read_csv(file_path, sep='\t'))
+        elif ext == '.json':
+            with open(file_path, 'r', encoding='utf-8') as f:
+                st.json(json.load(f))
+        elif ext == '.toml':
+            st.write(toml.load(file_path))
+        elif ext in ('.txt', '.log', '.md', '.yaml', '.yml', '.xml', '.html', '.py', '.sql', '.ini', '.cfg', '.conf'):
+            with open(file_path, 'r', encoding='utf-8', errors='replace') as f:
+                st.code(f.read(), language=ext.lstrip('.') or None)
+        else:
+            size = os.path.getsize(file_path)
+            st.info(f'Náhled pro příponu {ext or "(žádná)"} není podporován. Velikost: {size} B.')
+    except Exception as e:
+        st.error(f'Chyba při čtení souboru: {e}')
 
 tabs = st.tabs(["Hello world", "Debug"])
 
@@ -57,7 +82,8 @@ with tabs[1]:
                 files.append(os.path.join(root, filename))
         if files:
             for file_path in sorted(files):
-                st.write(file_path)
+                with st.expander(file_path):
+                    render_file_preview(file_path)
         else:
             st.write(f'Složka {data_path} je prázdná.')
     else:
