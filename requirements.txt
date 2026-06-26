@@ -1,4 +1,4 @@
 streamlit
 colorama==0.4.6
 emoji
-streamlit-aggrid
+streamlit-aggrid==1.2.0.post2
